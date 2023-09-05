@@ -31,10 +31,16 @@ async function getData() {
     async function loadCity(name) {
         loadingSpan.innerText = `Loading ${name}`;
         console.log('Reading data');
-        console.log(`Fetching from https://raw.githubusercontent.com/amoraschi/spain-cities-geojson/master/cities/${name}`);
-        const cityRes = await fetch(`https://raw.githubusercontent.com/amoraschi/spain-cities-geojson/master/cities/${name}`);
-        const data = await cityRes.json();
-        console.log('Data read');
+        console.log(`Fetching from https://raw.githubusercontent.com/amoraschi/spain-cities-geojson/master/simple-cities/${name}`);
+        const cityRes = await fetch(`https://raw.githubusercontent.com/amoraschi/spain-cities-geojson/master/simple-cities/${name}`);
+        console.log('Data fetched');
+        const data = await cityRes.json().catch(() => {
+            loadingSpan.innerText = `Loading ${name} failed`;
+        });
+        if (data == null) {
+            return;
+        }
+        console.log('Data parsed');
         setColors(data);
         const center = getCenter(data);
         if (Number.isNaN(center[0]) || Number.isNaN(center[1])) {
