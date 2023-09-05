@@ -9,6 +9,7 @@ const map = L.map('map', {
 });
 let opacityModifier = 100000;
 let weightModifier = 1;
+let colorModifier = 1000;
 getData();
 async function getData() {
     const listRes = await fetch('https://raw.githubusercontent.com/amoraschi/spain-cities-geojson/master/list.json');
@@ -19,6 +20,7 @@ async function getData() {
     const loadingSpan = document.getElementById('loading');
     const opacityModifierInput = document.getElementById('opacityModifier');
     const weightModifierInput = document.getElementById('weightModifier');
+    const colorModifierInput = document.getElementById('colorModifier');
     Object.keys(list).sort((a, b) => a.localeCompare(b)).forEach((city) => {
         const option = document.createElement('option');
         option.value = city;
@@ -41,7 +43,6 @@ async function getData() {
             return;
         }
         console.log('Data parsed');
-        setColors(data);
         const center = getCenter(data);
         if (Number.isNaN(center[0]) || Number.isNaN(center[1])) {
             loadingSpan.innerText = `Loading ${name} failed`;
@@ -78,13 +79,16 @@ async function getData() {
             const fileName = list[dropdown.value];
             opacityModifierInput.value = '100000';
             weightModifierInput.value = '1';
+            colorModifierInput.value = '1000';
             opacityModifier = 100000;
             weightModifier = 1;
+            colorModifier = 1000;
             await loadCity(fileName);
         };
         saveButton.onclick = () => {
             opacityModifier = Number(opacityModifierInput.value) ?? 0;
             weightModifier = Number(weightModifierInput.value) ?? 0;
+            colorModifier = Number(colorModifierInput.value) ?? 0;
             roadData.eachLayer((layer) => {
                 // @ts-expect-error
                 layer.setStyle(getStyle(layer.feature, center));
