@@ -33,8 +33,7 @@ async function getData() {
     async function loadCity(name) {
         loadingSpan.innerText = `Loading ${name}`;
         console.log('Reading data');
-        console.log(`Fetching from https://raw.githubusercontent.com/amoraschi/spain-cities-geojson/master/simple-cities/${name}`);
-        // const cityRes = await fetch(`https://raw.githubusercontent.com/amoraschi/spain-cities-geojson/master/simple-cities/${name}`)
+        console.log(`Fetching from ${name}`);
         const data = await fetchAPI(dropdown.value).catch(() => {
             loadingSpan.innerText = `Loading ${name} failed`;
         });
