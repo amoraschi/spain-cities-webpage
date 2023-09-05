@@ -34,11 +34,11 @@ async function getData() {
         loadingSpan.innerText = `Loading ${name}`;
         console.log('Reading data');
         console.log(`Fetching from https://raw.githubusercontent.com/amoraschi/spain-cities-geojson/master/simple-cities/${name}`);
-        const cityRes = await fetch(`https://raw.githubusercontent.com/amoraschi/spain-cities-geojson/master/simple-cities/${name}`);
-        console.log('Data fetched');
-        const data = await cityRes.json().catch(() => {
+        // const cityRes = await fetch(`https://raw.githubusercontent.com/amoraschi/spain-cities-geojson/master/simple-cities/${name}`)
+        const data = await fetchAPI(dropdown.value).catch(() => {
             loadingSpan.innerText = `Loading ${name} failed`;
         });
+        console.log('Data fetched');
         if (data == null) {
             return;
         }
