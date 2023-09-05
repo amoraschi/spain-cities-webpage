@@ -29,7 +29,7 @@ async function getData() {
     let roadData;
     await loadCity(list['Sevilla']);
     async function loadCity(name) {
-        loadingSpan.innerText = `Loading ${name}...`;
+        loadingSpan.innerText = `Loading ${name}`;
         console.log('Reading data');
         console.log(`Fetching from https://raw.githubusercontent.com/amoraschi/spain-cities-geojson/master/cities/${name}`);
         const cityRes = await fetch(`https://raw.githubusercontent.com/amoraschi/spain-cities-geojson/master/cities/${name}`);
@@ -37,6 +37,10 @@ async function getData() {
         console.log('Data read');
         setColors(data);
         const center = getCenter(data);
+        if (Number.isNaN(center[0]) || Number.isNaN(center[1])) {
+            loadingSpan.innerText = `Loading ${name} failed`;
+            return;
+        }
         const [minLat, maxLat, minLon, maxLon] = getMinMax(data);
         console.log('Center', center);
         map.fitBounds([
@@ -48,8 +52,6 @@ async function getData() {
             attribution: 'Map data &copy <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
             subdomains: 'abcd'
         }).addTo(map);
-        // const pos = L.latLng(center[0], center[1])
-        // L.marker(pos).addTo(map)
         if (roadData != null) {
             roadData.clearLayers();
             roadData.addData(data);
@@ -59,7 +61,13 @@ async function getData() {
                 style: (feature) => getStyle(feature, center)
             }).addTo(map);
         }
-        loadingSpan.innerText = `Loaded ${name}`;
+        let featuresProcessed = 0;
+        roadData.eachLayer(async () => {
+            featuresProcessed++;
+            if (featuresProcessed === data.features.length) {
+                loadingSpan.innerText = `Loaded ${name} (${data.features.length} features)`;
+            }
+        });
         dropdown.onchange = async () => {
             const fileName = list[dropdown.value];
             opacityModifierInput.value = '100000';
